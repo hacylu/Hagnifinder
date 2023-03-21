@@ -135,5 +135,5 @@ class ResNet(nn.Module):
             return x
 
 
-def RregressionModel(ASM=True, sf=0):
+def RegressionModel(ASM=True, sf=0):
     return ResNet([3, 4, 6, 3],asm=ASM, sf=sf)

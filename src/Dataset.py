@@ -18,7 +18,7 @@ preprocess_test = torchvision.transforms.Compose([
 preprocess_train = torchvision.transforms.Compose([
     torchvision.transforms.RandomVerticalFlip(p=0.5),
     torchvision.transforms.RandomHorizontalFlip(p=0.5),
-    torchvision.transforms.RandomRotation(90, interpolation=False, expand=False, center=None),
+    torchvision.transforms.RandomRotation(90, expand=False, center=None),
     torchvision.transforms.RandomCrop(224),
     torchvision.transforms.ToTensor(),
     normalize

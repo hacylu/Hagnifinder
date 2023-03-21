@@ -1,5 +1,6 @@
-# Hagnifinder: Predicting Magnification of Digital Histological Images using Deep Learning in PyTorch
+# Hagnifinder-PyTorch
 
+PyTorch implementation of ["Hagnifinder: Recovering Magnification Information of Digital Histological Images using Deep Learning"](https://www.sciencedirect.com/science/article/pii/S2153353923001165).
 ## Hagnifinder
 
 we developed a regression model based on convolutional neural network (CNN) to accurately predict magnification of a given histology image, named Histology image magnification finder (Hagnifinder). The Hagnifinder proposed in this work could provide such a functionality: given a random snapshot with a random organ site, providing a predictive magnification level associate with the snapshot..
@@ -21,7 +22,7 @@ Hagnifinder/
 
 After this run `src/set_dataset_info.py` to load the dataset information.
 
-# Training 
+# Train
 
 To train the Hagnifinder, cd into this repo's `src` root folder and execute:
 
@@ -58,10 +59,20 @@ Learning rate, optimizer and loss function can all be set in __main__ of train.p
 3. Set the parameter 'sf'= (Scaling factor calculated in step 2), continue to train the model (requires parameter 'ASM'=False, parameter 'cs'=False).
 
 #### The flow chart of model training
-![img.png](\img.png)
+![节点](./img.png)
 
-There is also a test function in train.py to test the model, change the code in the __main__ to test the model.
+# Test
+#### To ensure prediction accuracy, make sure that the image being tested contains a large number of nuclei!!!
 
+Predict histopathology images magnification using Hagnifinder:
 
+    $ python test.py
 
+The script takes the following command line options:
+
+- `image_path`: The image path, default to '..\\img\\Laryngeal (1).png'
+
+Citation:
+
+1.  ZHANG H, LIU Z, SONG M, LU C. Hagnifinder: Recovering magnification information of digital histological images using deep learning[J/OL]. Journal of Pathology Informatics, 2023, 14: 100302. DOI:10.1016/j.jpi.2023.100302.
 

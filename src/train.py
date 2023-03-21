@@ -1,7 +1,7 @@
 import torch
 import torch.optim as optim
 import sys
-from model import RregressionModel
+from model import RegressionModel
 import torchvision
 import argparse
 from tqdm import tqdm
@@ -22,9 +22,9 @@ parser.add_argument('--data_arg',
 parser.add_argument('--ASM', default=True)  # Whether to use ASM  in the model, True represents yes, False represents no
 parser.add_argument('--ev', default=2.2)  # expected variance in ASM, default=2.2
 
-parser.add_argument('--cs', default=False)  # Calculate the scaling factor, set to True when using (ASM must also be set to True)
+parser.add_argument('--cs',
+                    default=False)  # Calculate the scaling factor, set to True when using (ASM must also be set to True)
 parser.add_argument('--sf', default=0)  # Scaling factor, which takes effect when ASM=False
-
 
 args = parser.parse_args()
 
@@ -33,7 +33,7 @@ def load_model(name='new'):  # Load dataset:Change name='old' to load a saved mo
     if type(name) != str:
         sys.exit('Command must be a string!')
     if name == 'new':
-        model = RregressionModel()
+        model = RegressionModel()
     elif name == 'old':
         model = torch.load(
             '..\\model_save\\xxx.pkl')  # old model path
@@ -96,26 +96,6 @@ def train(epoch, train_load, mode):
     return total_loss / batch_size
 
 
-def test(mode, test_load, threshold=1):
-    mode.eval()
-    correct = 0
-    total = 0
-    with torch.no_grad():
-        for data in tqdm(test_load):
-            images, labels, typ = data
-            images, labels = images.to(device), labels.to(device)
-            outputs = model(images)
-            total += labels.size(0)
-            # Set the threshold N to determine the prediction result
-            a = outputs.cpu().numpy()  # predicted value
-            b = labels.cpu().numpy()  # label
-            correctlist = [abs(a[i] - b[i]) for i in range(0, len(a))]
-            for i in range(len(correctlist)):
-                if correctlist[i] <= threshold:
-                    correct += 1
-    print('Accuracy on val set: %.2f %%' % (100 * correct / total))
-
-
 if __name__ == '__main__':
     print("PyTorch Version: ", torch.__version__)
     print("Torchvision Version: ", torchvision.__version__)
@@ -145,5 +125,4 @@ if __name__ == '__main__':
             torch.save(model,
                        '../model_save/model_epoch' + str(
                            epoch) + '.pkl')
-    # test(model, test_loader, args.N) # test
 

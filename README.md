@@ -1,4 +1,4 @@
-# Hagnifinder-PyTorch
+# Hagnifinder-PyTorch (V1.1 was upgraded on 2023.06.14)
 
 PyTorch implementation of ["Hagnifinder: Recovering Magnification Information of Digital Histological Images using Deep Learning"](https://www.sciencedirect.com/science/article/pii/S2153353923001165).
 ## Hagnifinder
@@ -21,45 +21,6 @@ Hagnifinder/
 ```
 
 After this run `src/set_dataset_info.py` to load the dataset information.
-
-# Train
-
-To train the Hagnifinder, cd into this repo's `src` root folder and execute:
-
-    $ python train.py
-
-
-The script takes the following command line options:
-
-- `root`: the root directory where tha dataset is stored, default to `'..\\dataset'`
-
-- `epoch`: number of epochs to train for, default to `100`
-
-- `batch_size`: The number of samples per training, default to `32`
-
-- `num_workers`: default to `0`
-
-- `N`: Threshold used to judge prediction results, default to `1`
-
-- `data_arg`: data augmentation, set to True when training, set to False when testing. default to `True`
-
-- `ASM`: Whether to use ASM  in the model, True represents yes, False represents no. default to `True`
-
-- `ev`: expected variance in ASM. default to `2.2`
-
-- `cs`: Calculate the scaling factor, set to True when using (ASM must also be set to True). default to `False`
-
-- `sf`: Scaling factor, which takes effect when ASM=False. default to `0`
-
-Learning rate, optimizer and loss function can all be set in __main__ of train.py.
-
-### training strategy
-1. Train with the parameter 'ASM'=True, the trained model will be saved in Hagnifinder/model_save/, and the model can be loaded through the load_model function in train.py.
-2. Set the parameter 'cs'=True, , run 1epoch to calculate the scaling factor of the ASM in the current model (requires the parameter 'ASM'=True).
-3. Set the parameter 'sf'= (Scaling factor calculated in step 2), continue to train the model (requires parameter 'ASM'=False, parameter 'cs'=False).
-
-#### The flow chart of model training
-![节点](./img.png)
 
 # Test
 #### To ensure prediction accuracy, make sure that the image being tested contains a large number of nuclei!!!

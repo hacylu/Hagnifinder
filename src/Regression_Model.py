@@ -3,8 +3,10 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
 import numpy as np
+import Dataset
 import torch.optim as optim
 import sys
+from tensorboardX import SummaryWriter
 
 __all__ = ['ResNet50', 'ResNet101', 'ResNet152']
 
@@ -69,10 +71,10 @@ class ResNet(nn.Module):
 
         self.avgpool = nn.AvgPool2d(7, stride=1)
         # self.adpavgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc3 = nn.Linear(2048, 200)
-        self.fc2 = nn.Linear(200, 20)
-        self.afc1 = nn.Tanh()
-        self.fc1 = nn.Linear(20, 1)
+        self.fc3 = nn.Linear(2048, 1024)
+        self.fc2 = nn.Linear(1024, 1)
+        self.afc = nn.LeakyReLU()
+        self.fc1 = nn.Linear(1024, 1)
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -91,24 +93,6 @@ class ResNet(nn.Module):
             layers.append(Bottleneck(places * self.expansion, places))
 
         return nn.Sequential(*layers)
-
-    def auto_fact(self, input):
-        # input_redistr = self.redistribution(input)
-        input_redistr = input
-        max = torch.max(input_redistr).item()
-        min = torch.min(input_redistr).item()
-        mean = torch.mean(input_redistr).item()
-        if abs(max) > abs(min):
-            a = abs(max)
-        else:
-            a = abs(min)
-        if a != 0:
-            m = 2.5 / a  # 缩放因子
-            # m = 4.5 / a
-            out = input_redistr * m
-            return out
-        else:
-            return input
 
     def auto_fact_v2(self, input):
         # input_redistr = self.redistribution(input)
@@ -132,6 +116,12 @@ class ResNet(nn.Module):
         else:
             return input
 
+    '''def redistribution(self, inpu):
+        mean = torch.mean(inpu).item()
+        mean1 = torch.full(inpu.shape, mean).cuda()
+        inpu_new = inpu - mean1
+        return inpu_new'''
+
     def forward(self, x):
         x = self.conv1(x)
 
@@ -143,10 +133,9 @@ class ResNet(nn.Module):
         x = self.avgpool(x)
         x = x.view(x.size(0), -1)
         x = self.fc3(x)
-        x = self.fc2(x)  # 在res50中增加
-        x = x * 4.127e-05
-        x = self.afc1(x)
-        x = self.fc1(x)
+        x = self.afc(x)
+        x = F.dropout(x, p=0.5, training=self.training)
+        x = self.fc2(x)
         x = x.squeeze(-1)
         return x
 

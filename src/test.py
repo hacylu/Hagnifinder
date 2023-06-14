@@ -10,7 +10,7 @@ import argparse
 # Parameters #
 ##############
 parser = argparse.ArgumentParser()
-parser.add_argument('--image_path', default='..\\img\\Laryngeal (1).png')
+parser.add_argument('--image_path', default='../img/breast.png')
 args = parser.parse_args()
 
 
@@ -22,6 +22,7 @@ normalize = torchvision.transforms.Normalize(
 )
 
 preprocess = torchvision.transforms.Compose([
+    #torchvision.transforms.RandomCrop(224),
     torchvision.transforms.CenterCrop(224),
     torchvision.transforms.ToTensor(),
     normalize
@@ -37,14 +38,14 @@ def load_model(name='old'):  # 加载保存的数据集
 
         # model = ResNet50()
     elif name == 'old':
-        model = torch.load('..\\model_save\\sf_4.127e-5.pkl')  # 在此处更改模型参数
+        model = torch.load('..\\model_save\\bestmodel.pkl')  # 在此处更改模型参数
     else:
         sys.exit('命令必须是new或者old！')
     return model
 
 
 def test(model, imgpath):
-    model.eval()  # 测试时一定要加上
+    model.eval()
     img = Image.open(imgpath)
     image = preprocess(img)
     images1 = image.view(1, *image.size())
